@@ -1,0 +1,95 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>ramzi_nail | Профиль</title>
+    <link rel="shortcut icon" href="{% static '/src/assets/img/icon.png' %}" type="image/png">
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/profile.css' %}" rel="stylesheet">
+</head>
+<body class="text-center">
+
+<div class="container rounded bg-white mt-5 mb-5">
+    <a href="{% url 'index' %}"><button class="btn btn-primary">Главная</button></a>
+    <a href="{% url 'courses' %}"><button class="btn btn-primary">Курсы</button></a>
+    <a href="{% url 'logout' %}"><button class="btn btn-primary">Выйти</button></a>
+    <div class="row">
+        <main class="form-signin w-100 m-auto">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="text-danger">
+                    {{ form.first_name.errors }}
+                </div>
+                <div class="text-danger">
+                    {{ form.password.errors }}
+                </div>
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="mb-3 text-{% if message.tags == 'error' %}danger{% else %}success{% endif %}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+
+                <div class="form-floating">
+                    <input value="{{ form.first_name.value }}" name="first_name" type="text" class="form-control"
+                           placeholder="first_name" id="{{ form.first_name.id_for_label }}">
+                    <label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
+                </div>
+                <div class="form-floating">
+                    <input value="{{ form.telephone.value }}" name="telephone" type="text" minlength="11" maxlength="11"
+                           class="form-control" placeholder="telephone" id="{{ form.telephone.id_for_label }}">
+                    <label for="{{ form.telephone.id_for_label }}">{{ form.telephone.label }}</label>
+                </div>
+                <button class="w-100 btn btn-lg btn-primary mb-3" type="submit">Изменить</button>
+            </form>
+        </main>
+    </div>
+    {% if my_courses %}
+        {% for course in my_courses %}
+            <h5>{{ course }}<a class="text-danger" href="{% url 'delete_enroll' user.pk course.pk %}">X</a></h5>
+        {% endfor %}
+    {% else %}
+        <h5>У вас нет заявок</h5>
+    {% endif %}
+    <p></p>
+    {% for t in timesheet %}
+        {% if t.quantity > 0 %}
+            <div class="section_our_solution">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="our_solution_category">
+                        <div class="solution_cards_box">
+                            <div class="solution_card d-flex justify-content-center">
+                                <img alt="..." width="245" height="245" src="{{ t.course.photo.url }}">
+                                <div>
+                                    <div class="solu_title">
+                                        <h3>{{ t.course.name }}</h3>
+                                    </div>
+                                    <div class="solu_description">
+                                        <h5>{{ t.date }}</h5>
+                                        <h5>Осталось мест: {{ t.quantity }}</h5>
+                                        <a href="{% url 'enroll' user.pk t.pk %}"><button type="button" class="read_more_btn">Записаться</button></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"
+        integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"
+        integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha"
+        crossorigin="anonymous"></script>
+<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'bootstrap/js/bootstrap.bundle.js' %}"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+</body>
+</html>
